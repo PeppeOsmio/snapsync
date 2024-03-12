@@ -55,9 +55,9 @@ func executeOnlySnapshot(config *structs.Config, snapshotConfig *structs.Snapsho
 		slog.Debug(fmt.Sprintf("%s copying latest snapshot...", snapshotLogPrefix))
 		cpCommand := fmt.Sprintf("%s -lra %s/./ %s", config.CpPath, newestSnapshotPath, tmpDir)
 		slog.Debug(fmt.Sprintf("%s running %s", snapshotLogPrefix, cpCommand))
-		rsyncOutput, cpErr := exec.Command("sh", "-c", cpCommand).CombinedOutput()
+		cpOutput, cpErr := exec.Command("sh", "-c", cpCommand).CombinedOutput()
 		if cpErr != nil {
-			return fmt.Errorf("%s error copying last snapshot %s to %s: %s, %s", snapshotLogPrefix, newestSnapshotPath, tmpDir, cpErr.Error(), string(rsyncOutput))
+			return fmt.Errorf("%s error copying last snapshot %s to %s: %s, %s", snapshotLogPrefix, newestSnapshotPath, tmpDir, cpErr.Error(), string(cpOutput)[:100])
 		}
 	} else if os.IsNotExist(err) {
 		slog.Debug(fmt.Sprintf("%s creating first snapshot %s", snapshotLogPrefix, newestSnapshotPath))
@@ -85,7 +85,7 @@ func executeOnlySnapshot(config *structs.Config, snapshotConfig *structs.Snapsho
 		slog.Debug(fmt.Sprintf("%s running %s", snapshotLogPrefix, rsyncCommand))
 		rsyncOutput, err := exec.Command("sh", "-c", rsyncCommand).CombinedOutput()
 		if err != nil {
-			return fmt.Errorf("%s can't sync %s/ to %s: %s, %s", snapshotLogPrefix, dirToSnapshot.SrcDirAbspath, dstDirFull, err.Error(), string(rsyncOutput))
+			return fmt.Errorf("%s can't sync %s/ to %s: %s, %s", snapshotLogPrefix, dirToSnapshot.SrcDirAbspath, dstDirFull, err.Error(), string(rsyncOutput)[:100])
 		}
 	}
 
