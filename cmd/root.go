@@ -45,7 +45,7 @@ var rootCmd = &cobra.Command{
 
 		snapshotsConfigs, err := configs.LoadSnapshotsConfigs(config.SnapshotsConfigsDir, expandVars)
 		if err != nil {
-			slog.Error("Can't get snapshots configs in " + configsDir + ": " + err.Error())
+			slog.Error("Can't get snapshots configs in " + config.SnapshotsConfigsDir + ": " + err.Error())
 		}
 
 		snapshotTask := func(snapshotConfig *structs.SnapshotConfig) {

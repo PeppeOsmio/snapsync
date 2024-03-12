@@ -236,7 +236,7 @@ func GetSnapshotsInfo(snapshotsConfigsDir string, expandVars bool, snapshotName 
 		if err != nil {
 			return snapshotsInfo, fmt.Errorf("can't stat %s: %s", snapshotFullPath, err.Error())
 		}
-		snapshotInfo, err := utils.GetInfoFromSnapshotPath(path.Join(snapshotConfig.SnapshotsDir, entry.Name()))
+		snapshotInfo, err := utils.GetInfoFromSnapshotPath(snapshotFullPath)
 		if err != nil {
 			return snapshotsInfo, fmt.Errorf("can't parse snapshot name: %s", err.Error())
 		}

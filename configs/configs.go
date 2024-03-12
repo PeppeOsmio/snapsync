@@ -56,7 +56,7 @@ func LoadSnapshotsConfigs(snapshotsConfigsDir string, expandVars bool) (snapshot
 		}
 		for _, dir := range snapshotConfig.Dirs {
 			if !path.IsAbs(dir.SrcDirAbspath) {
-				return nil, fmt.Errorf("%s: src_dir_abspath must be an absolute path", snapshotConfig.SnapshotName)
+				return nil, fmt.Errorf("%s: src_dir_abspath %s must be an absolute path", snapshotConfig.SnapshotName, dir.SrcDirAbspath)
 			}
 		}
 		snapshotsConfigs = append(snapshotsConfigs, &snapshotConfig)
