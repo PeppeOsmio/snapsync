@@ -1,13 +1,13 @@
-FROM golang:1.22.1-alpine3.19 as build
+FROM golang:1.22.1-bookworm as build
 
 COPY . /snapsync
 WORKDIR /snapsync
 
 RUN go build -o snapsync main.go
 
-FROM alpine:3.19
+FROM ubuntu:22.04
 
-RUN apk add rsync
+RUN apt update && apt-get upgrade -y && apt install rsync -y
 
 COPY --from=build /snapsync/snapsync /snapsync/snapsync
 COPY --from=build /snapsync/entrypoint.sh /snapsync/entrypoint.sh
