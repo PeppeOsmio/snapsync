@@ -1,6 +1,7 @@
 services:
   snapsync:
     container_name: snapsync
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
