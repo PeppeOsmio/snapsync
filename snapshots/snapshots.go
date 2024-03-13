@@ -258,9 +258,9 @@ func RestoreSnapshot(config *structs.Config, number int, snapshotConfig *structs
 		snapshottedDirPath := path.Join(snapshotConfig.SnapshotsDir, fmt.Sprintf("%s.%d", snapshotConfig.SnapshotName, number), dir.DstDirInSnapshot)
 		rsyncCommand := getRsyncDirsCommand(config, snapshottedDirPath, dir.SrcDirAbspath, nil)
 		slog.Debug(rsyncCommand)
-		rsyncOutput, err = exec.Command("sh", "-c", rsyncCommand).CombinedOutput()
+		rsyncOutput, err := exec.Command("sh", "-c", rsyncCommand).CombinedOutput()
 		if err != nil {
-			slog.Error(fmt.Sprintf("%s can't sync %s/ to %s: %s, %s", snapshotLogPrefix, snapshottedDirPath, dir.SrcDirAbspath, err.Error().string(rsyncOutput)[:10000]))
+			slog.Error(fmt.Sprintf("%s can't sync %s/ to %s: %s, %s", snapshotLogPrefix, snapshottedDirPath, dir.SrcDirAbspath, err.Error(), string(rsyncOutput)[:10000]))
 		}
 	}
 	return err
