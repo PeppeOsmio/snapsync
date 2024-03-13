@@ -2,5 +2,3 @@ log_level: error
 cp_path: /bin/cp
 rsync_path: /usr/bin/rsync
 snapshots_configs_dir: ./snapshots_configs
-init_commands:
-  - source /hostfs/$HOST_HOMELAB_ENVS

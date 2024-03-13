@@ -8,7 +8,7 @@ import (
 	"log/slog"
 	"os"
 	"snapsync/configs"
-	"snapsync/snapshots"
+	"snapsync/core"
 	"snapsync/structs"
 	"time"
 
@@ -21,7 +21,7 @@ var rootCmd = &cobra.Command{
 	Short: "Snapsync is tool that performs snapshots of directories using rsync and hard links to use less space.",
 	Long:  `Snapsync is tool that performs snapshots of directories using rsync and hard links to use less space.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		configsDir, err := cmd.Flags().GetString("config-dir")
+		configFilePath, err := cmd.Flags().GetString("config-file")
 		if err != nil {
 			slog.Error("can't get config-dir flag")
 			return
@@ -31,9 +31,14 @@ var rootCmd = &cobra.Command{
 			slog.Error("can't get expand-vars flag")
 			return
 		}
-		config, err := configs.LoadConfig(configsDir, expandVars)
+		config, err := configs.LoadConfig(configFilePath, expandVars)
 		if err != nil {
-			slog.Error("can't get " + configsDir + ": " + err.Error())
+			slog.Error("can't get " + configFilePath + ": " + err.Error())
+			return
+		}
+		err = core.RunInitCommands(config)
+		if err != nil {
+			slog.Error(err.Error())
 			return
 		}
 
@@ -49,7 +54,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		snapshotTask := func(snapshotConfig *structs.SnapshotConfig) {
-			snapshotErr := snapshots.ExecuteSnapshot(config, snapshotConfig)
+			snapshotErr := core.ExecuteSnapshot(config, snapshotConfig)
 			if snapshotErr != nil {
 				slog.Error(fmt.Sprintf("[%s] can't execute snapshot: %s", snapshotConfig.SnapshotName, snapshotErr.Error()))
 			}
@@ -114,7 +119,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().String("config-dir", configs.GetDefaultConfigsDir(), "Directory where config.yml is stored")
+	rootCmd.PersistentFlags().String("config-file", configs.GetDefaultConfigFile(), "Directory where config.yml is stored")
 	rootCmd.PersistentFlags().Bool("expand-vars", true, "Expand env variables in the config files")
 	rootCmd.Flags().StringArray("run-once", []string{}, "Run these snapshots once")
 }

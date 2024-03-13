@@ -7,10 +7,11 @@ import (
 )
 
 type Config struct {
-	LogLevel            string `yaml:"log_level"`
-	CpPath              string `yaml:"cp_path"`
-	RSyncPath           string `yaml:"rsync_path"`
-	SnapshotsConfigsDir string `yaml:"snapshots_configs_dir"`
+	LogLevel            string   `yaml:"log_level"`
+	CpPath              string   `yaml:"cp_path"`
+	RSyncPath           string   `yaml:"rsync_path"`
+	SnapshotsConfigsDir string   `yaml:"snapshots_configs_dir"`
+	InitCommands        []string `yaml:"init_commands"`
 }
 
 type SnapshotConfig struct {

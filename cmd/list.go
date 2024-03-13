@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"snapsync/configs"
-	"snapsync/snapshots"
+	"snapsync/core"
 	"snapsync/utils"
 
 	"github.com/spf13/cobra"
@@ -20,7 +20,7 @@ var listCmd = &cobra.Command{
 	Long:  `List the snapshots`,
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		configsDir, err := cmd.Flags().GetString("config-dir")
+		configFilePath, err := cmd.Flags().GetString("config-file")
 		if err != nil {
 			slog.Error("can 't get configs-dir flag")
 			return
@@ -30,13 +30,19 @@ var listCmd = &cobra.Command{
 			slog.Error("can 't get expand-vars flag")
 			return
 		}
-		config, err := configs.LoadConfig(configsDir, expandVars)
+		config, err := configs.LoadConfig(configFilePath, expandVars)
 		if err != nil {
-			slog.Error("can't get " + configsDir + ": " + err.Error())
+			slog.Error("can't get " + configFilePath + ": " + err.Error())
 			return
 		}
+		err = core.RunInitCommands(config)
+		if err != nil {
+			slog.Error(err.Error())
+			return
+		}
+
 		snapshotToList := args[0]
-		snapshotsInfo, err := snapshots.GetSnapshotsInfo(config.SnapshotsConfigsDir, expandVars, snapshotToList)
+		snapshotsInfo, err := core.GetSnapshotsInfo(config.SnapshotsConfigsDir, expandVars, snapshotToList)
 		if err != nil {
 			slog.Error("Can't get snapshots of snapshot " + snapshotToList + ": " + err.Error())
 			return

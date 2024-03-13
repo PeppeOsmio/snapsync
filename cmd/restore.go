@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"snapsync/configs"
-	"snapsync/snapshots"
+	"snapsync/core"
 	"snapsync/utils"
 
 	"github.com/spf13/cobra"
@@ -20,7 +20,7 @@ var restoreCmd = &cobra.Command{
 	Long:  `Restore a snapshot`,
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		configsDir, err := cmd.Flags().GetString("config-dir")
+		configFilePath, err := cmd.Flags().GetString("config-file")
 		if err != nil {
 			slog.Error("can 't get configs-dir flag")
 			return
@@ -30,9 +30,14 @@ var restoreCmd = &cobra.Command{
 			slog.Error("can 't get expand-vars flag")
 			return
 		}
-		config, err := configs.LoadConfig(configsDir, expandVars)
+		config, err := configs.LoadConfig(configFilePath, expandVars)
 		if err != nil {
-			slog.Error("can't get " + configsDir + ": " + err.Error())
+			slog.Error("can't get " + configFilePath + ": " + err.Error())
+			return
+		}
+		err = core.RunInitCommands(config)
+		if err != nil {
+			slog.Error(err.Error())
 			return
 		}
 
@@ -50,7 +55,7 @@ var restoreCmd = &cobra.Command{
 			return
 		}
 
-		err = snapshots.RestoreSnapshot(config, number, snapshotConfig)
+		err = core.RestoreSnapshot(config, number, snapshotConfig)
 		if err != nil {
 			slog.Error("an error occurred while restoring the snapshot: " + err.Error())
 			return

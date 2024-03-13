@@ -4,3 +4,4 @@ snapshots_configs
 ss
 snapsync
 .env
+config.yml

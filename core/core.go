@@ -1,4 +1,4 @@
-package snapshots
+package core
 
 import (
 	"fmt"
@@ -264,4 +264,14 @@ func RestoreSnapshot(config *structs.Config, number int, snapshotConfig *structs
 		}
 	}
 	return err
+}
+
+func RunInitCommands(config *structs.Config) error {
+	for _, command := range config.InitCommands {
+		output, err := exec.Command(command).CombinedOutput()
+		if err != nil {
+			return fmt.Errorf("can't execute command %s: %s, %s", command, err.Error(), string(output)[:10000])
+		}
+	}
+	return nil
 }

@@ -10,11 +10,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func LoadConfig(configsDir string, expandVars bool) (config *structs.Config, err error) {
-	configPath := path.Join(configsDir, "config.yml")
-	configFile, err := os.ReadFile(configPath)
+func LoadConfig(configFilePath string, expandVars bool) (config *structs.Config, err error) {
+	configFile, err := os.ReadFile(configFilePath)
 	if err != nil {
-		return nil, fmt.Errorf("can't read %s: %s", configPath, err.Error())
+		return nil, fmt.Errorf("can't read %s: %s", configFilePath, err.Error())
 	}
 	configFileContent := string(configFile)
 	if expandVars {
@@ -23,7 +22,7 @@ func LoadConfig(configsDir string, expandVars bool) (config *structs.Config, err
 	config = &structs.Config{}
 	err = yaml.Unmarshal([]byte(configFileContent), config)
 	if err != nil {
-		return nil, fmt.Errorf("can't parse %s: %s", configPath, err.Error())
+		return nil, fmt.Errorf("can't parse %s: %s", configFilePath, err.Error())
 	}
 	return config, nil
 }
@@ -81,9 +80,9 @@ func ValidateSnapshotConfig(snapshotConfig *structs.SnapshotConfig) error {
 	return nil
 }
 
-func GetDefaultConfigsDir() string {
+func GetDefaultConfigFile() string {
 	result, _ := os.Getwd()
-	return result
+	return path.Join(result, "config.yml")
 }
 
 func GetSnapshotConfigByName(snapshotsConfigsDir string, expandVars bool, snapshotName string) (*structs.SnapshotConfig, error) {
