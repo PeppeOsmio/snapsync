@@ -124,7 +124,7 @@ func executeOnlySnapshot(config *structs.Config, snapshotConfig *structs.Snapsho
 		snapshotOldPath := path.Join(snapshotConfig.SnapshotsDir, snapshotOldName)
 		snapshotRenamedName := GetSnapshotDirName(snapshotConfig.SnapshotName, number+1)
 		snapshotRenamedPath := path.Join(snapshotConfig.SnapshotsDir, snapshotRenamedName)
-		slog.Debug(fmt.Sprintf("%s renaming %s to %s", snapshotLogPrefix, snapshotOldPath, snapshotRenamedName))
+		slog.Debug(fmt.Sprintf("%s renaming %s to %s", snapshotLogPrefix, snapshotOldPath, snapshotRenamedPath))
 		err = os.Rename(snapshotOldPath, snapshotRenamedPath)
 		if err != nil {
 			return fmt.Errorf("%s can't move %s to %s: %s", snapshotLogPrefix, snapshotOldPath, snapshotOldPath, err.Error())
